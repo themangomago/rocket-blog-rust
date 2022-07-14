@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Blog-Rust</title>
+</head>
+
+<body>
+    {% include "nav" %}
+
+    <div class="container">
+        <p>Blog in Rust using rocket</p>
+        <p>{{test}}</p>
+
+        {% block main %}{% endblock main %}
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,12 @@
+{% extends "base" %}
+
+{% block main %}
+
+<div>
+    {% for post in posts %}
+    <div>
+        {{post}}
+    </div>
+    {% endfor %}
+</div>
+{% endblock main %}
