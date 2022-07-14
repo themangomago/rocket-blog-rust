@@ -5,6 +5,9 @@ extern crate rocket;
 #[macro_use]
 extern crate rocket_contrib;
 
+use std::path::{Path, PathBuf};
+
+use rocket::response::NamedFile;
 use rocket_contrib::templates::Template;
 use tera::Context;
 
@@ -18,8 +21,13 @@ fn index() -> Template {
 
 fn build_rocket() -> rocket::Rocket {
     rocket::ignite()
-        .mount("/", routes![index])
+        .mount("/", routes![index, files])
         .attach(Template::fairing())
+}
+
+#[get("/assets/<file..>")]
+fn files(file: PathBuf) -> Option<NamedFile> {
+    NamedFile::open(Path::new("assets/").join(file)).ok()
 }
 
 fn main() {

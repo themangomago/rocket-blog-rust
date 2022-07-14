@@ -2,11 +2,14 @@
 
 {% block main %}
 
-<div>
-    {% for post in posts %}
-    <div>
+{% for post in posts %}
+<section class="section">
+    <h1 class="title">{{post}}</h1>
+    <h2 class="subtitle">
         {{post}}
-    </div>
-    {% endfor %}
-</div>
+    </h2>
+</section>
+
+{% endfor %}
+
 {% endblock main %}
