@@ -21,11 +21,11 @@
 
         <div class="navbar-end">
             {% if user.logged_in %}
-            <a class="navbar-item" href="post/create">Create Post</a>
-            <a class="navbar-item" href="user/settings">Settings</a>
-            <a class="navbar-item" href="user/logout">Logout</a>
+            <a class="navbar-item" href="/post/create">Create Post</a>
+            <a class="navbar-item" href="/user/settings">Settings</a>
+            <a class="navbar-item" href="/user/logout">Logout</a>
             {% else %}
-            <a class="navbar-item" href="user/login">Login</a>
+            <a class="navbar-item" href="/user/login">Login</a>
             {% endif %}
         </div>
     </div>
