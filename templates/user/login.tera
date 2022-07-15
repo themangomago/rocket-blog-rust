@@ -1,33 +1,30 @@
 {% extends "base" %}
 
 {% block main %}
-
-
 <div class="columns is-centered">
     <div class="column is-5-tablet is-4-desktop is-3-widescreen">
-        <form action="" class="box">
+        <form class="box" id="login" method="post" action="/user/login">
             <div class="field">
-                <label for="" class="label">Email</label>
+                <label for="" class="label">User</label>
                 <div class="control has-icons-left">
-                    <input type="email" placeholder="e.g. bobsmith@gmail.com" class="input" required>
+                    <input name="username" class="input" type="text" placeholder="name" required>
                     <span class="icon is-small is-left">
                         <i class="fa fa-envelope"></i>
                     </span>
                 </div>
+
             </div>
             <div class="field">
                 <label for="" class="label">Password</label>
                 <div class="control has-icons-left">
-                    <input type="password" placeholder="*******" class="input" required>
+                    <input name="password" class="input" type="password" placeholder="******" required>
                     <span class="icon is-small is-left">
                         <i class="fa fa-lock"></i>
                     </span>
                 </div>
             </div>
             <div class="field">
-                <button class="button is-danger">
-                    Login
-                </button>
+                <button type="submit" class="button is-danger">Login</button>
             </div>
         </form>
     </div>

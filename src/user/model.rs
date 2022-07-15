@@ -1,9 +1,14 @@
+use serde::{Deserialize, Serialize};
+use sha2::{Digest, Sha512};
+
+#[derive(Serialize, Deserialize)]
 pub struct User {
     pub name: String,
     pub profile: String,
     pub credentials: UserCredentials,
 }
 
+#[derive(Serialize, Deserialize)]
 pub struct UserCredentials {
     pub username: String,
     password_hash: String,
@@ -11,8 +16,10 @@ pub struct UserCredentials {
 
 impl UserCredentials {
     pub fn check_password(&self, password: &str) -> bool {
-        // TODO: Hash user password and compare to password_hash
-        self.password_hash == password
+        let mut sha512 = Sha512::new();
+        sha512.update(password);
+        let password_hash = hex::encode(sha512.finalize().as_slice());
+        self.password_hash == password_hash
     }
 }
 
