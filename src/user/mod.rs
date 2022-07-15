@@ -6,6 +6,7 @@ use rocket_contrib::templates::Template;
 use tera::Context;
 
 use crate::database::model::Database;
+use crate::get_user_cookie;
 
 #[path = "model.rs"]
 pub mod model;
@@ -21,9 +22,10 @@ pub struct Login {
 }
 
 #[get("/login")]
-fn login() -> Template {
+fn login(cookies: Cookies) -> Template {
     println!("login");
     let mut context = Context::new();
+    get_user_cookie(cookies, &mut context);
     Template::render("user/login", &context.into_json())
 }
 
@@ -53,6 +55,12 @@ fn login_post(mut cookies: Cookies, form: Form<Login>, database: State<Database>
     }
 }
 
+#[get("/logout")]
+fn logout(mut cookies: Cookies) -> Redirect {
+    cookies.remove_private(Cookie::named("user"));
+    Redirect::to("/")
+}
+
 pub fn get_routes() -> Vec<rocket::Route> {
-    routes![login, login_post]
+    routes![login, login_post, logout]
 }
