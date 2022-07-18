@@ -1,0 +1,13 @@
+{% if errors %}
+{% for error in errors %}
+<script>
+    bulmaToast.toast({ message: '{{ error }}', type: 'is-danger' })
+</script>
+{% endfor %}
+{% endif %}
+
+{% if notifications %}
+{% for notification in notifications %}
+<script>bulmaToast.toast({ message: '{{ notification }}', type: 'is-info' })</script>
+{% endfor %}
+{% endif %}

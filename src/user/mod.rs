@@ -5,8 +5,8 @@ use rocket::State;
 use rocket_contrib::templates::Template;
 use tera::Context;
 
-use crate::database::model::Database;
-use crate::get_user_cookie;
+use crate::database::model::StateHandler;
+use crate::{database, get_user_cookie};
 
 #[path = "model.rs"]
 pub mod model;
@@ -30,7 +30,7 @@ fn login(cookies: Cookies) -> Template {
 }
 
 #[post("/login", data = "<form>")]
-fn login_post(mut cookies: Cookies, form: Form<Login>, database: State<Database>) -> Redirect {
+fn login_post(mut cookies: Cookies, form: Form<Login>, database: State<StateHandler>) -> Redirect {
     let user = database.get_user(&form.username);
 
     if !user.is_none() {

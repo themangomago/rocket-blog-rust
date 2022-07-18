@@ -7,6 +7,7 @@
     <title>Blog-Rust</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
+    <script src="assets/js/bulma-toast.min.js"></script>
 </head>
 
 <body class="has-navbar-fixed-top">
@@ -17,6 +18,18 @@
     </div>
 
     {% include "footer" %}
+    <script>
+        bulmaToast.setDefaults({
+            duration: 3000,
+            position: 'bottom-left',
+            dismissible: true,
+            animate: {
+                enter: 'animated fadeInDown',
+                exit: 'animated fadeOutUp'
+            }
+        });
+    </script>
+    {% include "toast" %}
 </body>
 
 </html>

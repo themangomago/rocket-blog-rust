@@ -15,7 +15,7 @@ mod blog;
 mod database;
 mod user;
 
-use database::model::Database;
+use database::model::StateHandler;
 
 // Default entrypoint
 #[get("/")]
@@ -27,6 +27,9 @@ fn index(mut cookies: Cookies) -> Template {
 
     context.insert("test", "test2");
     context.insert("posts", &vec!["post1", "post2", "post3"]);
+
+    context.insert("notifications", &vec!["Test Notification"]);
+    context.insert("errors", &vec!["Cant login", "Error"]);
     Template::render("posts/index", &context.into_json())
 }
 
@@ -45,16 +48,17 @@ pub fn get_user_cookie(mut cookies: Cookies, context: &mut Context) {
 }
 
 // Setup rocket
-fn build_rocket(db: Database) -> rocket::Rocket {
+fn build_rocket(db: StateHandler) -> rocket::Rocket {
     rocket::ignite()
         .manage(db)
         .mount("/", routes![index, files])
         .mount("/user", user::get_routes())
+        .mount("/post", blog::get_routes())
         .attach(Template::fairing())
 }
 
 fn main() {
-    let mut database = Database::new();
+    let mut database = StateHandler::new();
     database.load_databases();
 
     build_rocket(database).launch();

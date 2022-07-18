@@ -1,6 +1,7 @@
 use std::{
     fs::File,
     io::{BufReader, BufWriter},
+    sync::Mutex,
 };
 
 extern crate serde_json;
@@ -10,16 +11,16 @@ use sha2::{Digest, Sha512};
 use crate::blog::model::Post;
 use crate::user::model::User;
 
-pub struct Database {
-    pub users: Vec<User>,
-    pub posts: Vec<Post>,
+pub struct StateHandler {
+    pub users: Mutex<Vec<User>>,
+    pub posts: Mutex<Vec<Post>>,
 }
 
-impl Database {
-    pub fn new() -> Database {
-        Database {
-            users: Vec::new(),
-            posts: Vec::new(),
+impl StateHandler {
+    pub fn new() -> StateHandler {
+        StateHandler {
+            users: Mutex::new(Vec::new()),
+            posts: Mutex::new(Vec::new()),
         }
     }
 
@@ -28,10 +29,21 @@ impl Database {
         self.load_post_database();
     }
 
-    pub fn get_user(&self, username: &str) -> Option<&User> {
-        self.users
-            .iter()
-            .find(|user| user.credentials.username == username)
+    pub fn get_user(&self, username: &str) -> Option<User> {
+        for user in self.users.lock().unwrap().iter() {
+            if user.credentials.username == username {
+                //name: String, profile: String, username: String, password_hash: String
+                let user: User = User::new(
+                    user.name.clone(),
+                    user.profile.clone(),
+                    user.admin_rights,
+                    user.credentials.username.clone(),
+                    user.credentials.password_hash.clone(),
+                );
+                return Some(user);
+            }
+        }
+        None
     }
 
     fn load_user_database(&mut self) {
@@ -50,10 +62,11 @@ impl Database {
             let dummy_user = User::new(
                 "John Doe".to_string(),
                 "This is a dummy user".to_string(),
+                1,
                 "admin".to_string(),
                 password_hash,
             );
-            self.users.push(dummy_user);
+            self.users = Mutex::new(vec![dummy_user]);
             self.save_user_database();
             println!("User database created with dummy user: admin pw: admin");
         }

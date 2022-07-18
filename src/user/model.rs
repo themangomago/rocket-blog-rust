@@ -5,13 +5,14 @@ use sha2::{Digest, Sha512};
 pub struct User {
     pub name: String,
     pub profile: String,
+    pub admin_rights: u8,
     pub credentials: UserCredentials,
 }
 
 #[derive(Serialize, Deserialize)]
 pub struct UserCredentials {
     pub username: String,
-    password_hash: String,
+    pub password_hash: String,
 }
 
 impl UserCredentials {
@@ -24,10 +25,17 @@ impl UserCredentials {
 }
 
 impl User {
-    pub fn new(name: String, profile: String, username: String, password_hash: String) -> User {
+    pub fn new(
+        name: String,
+        profile: String,
+        admin_rights: u8,
+        username: String,
+        password_hash: String,
+    ) -> User {
         User {
             name,
             profile,
+            admin_rights,
             credentials: UserCredentials {
                 username: username,
                 password_hash: password_hash,
