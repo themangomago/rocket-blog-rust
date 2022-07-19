@@ -8,6 +8,7 @@ use std::{
 extern crate serde_json;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha512};
+use uuid::Uuid;
 
 use crate::{blog::post_model::Post, user::user_model::User};
 
@@ -97,10 +98,12 @@ impl StateHandler {
         } else {
             // Post database not found - create one
             let dummy_post: Post = Post::new(
-                "uuid".to_string(),
+                Uuid::new_v4().to_string(),
+                chrono::Local::now().format("%Y-%m-%d %H:%M:%S").to_string(),
                 "admin".to_string(),
                 "Dummy post".to_string(),
-                "This is a dummy post".to_string(),
+                "This is a dummy post. Congratulations! Be sure to add some real content to it."
+                    .to_string(),
             );
             self.posts = Mutex::new(vec![dummy_post]);
 

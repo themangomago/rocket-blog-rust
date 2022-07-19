@@ -177,6 +177,7 @@ dependencies = [
 name = "blog-rust"
 version = "0.1.0"
 dependencies = [
+ "chrono",
  "hex",
  "rand",
  "rocket",
@@ -185,6 +186,7 @@ dependencies = [
  "serde_json",
  "sha2 0.10.2",
  "tera 1.16.0",
+ "uuid",
 ]
 
 [[package]]
@@ -1651,6 +1653,28 @@ dependencies = [
  "idna",
  "matches",
  "percent-encoding 1.0.1",
+]
+
+[[package]]
+name = "uuid"
+version = "1.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "dd6469f4314d5f1ffec476e05f17cc9a78bc7a27a6a857842170bdf8d6f98d2f"
+dependencies = [
+ "getrandom",
+ "rand",
+ "uuid-macro-internal",
+]
+
+[[package]]
+name = "uuid-macro-internal"
+version = "1.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "548f7181a5990efa50237abb7ebca410828b57a8955993334679f8b50b35c97d"
+dependencies = [
+ "proc-macro2 1.0.40",
+ "quote 1.0.20",
+ "syn 1.0.98",
 ]
 
 [[package]]

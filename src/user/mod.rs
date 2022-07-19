@@ -40,6 +40,14 @@ fn login_post(mut cookies: Cookies, form: Form<Login>, database: State<StateHand
             let mut cookie = Cookie::new("user", form.username.clone());
             cookie.set_path("/");
             cookies.add_private(cookie);
+
+            let admin_level: u8 = user.admin_rights;
+            if admin_level > 0 {
+                let mut cookie = Cookie::new("admin", admin_level.to_string());
+                cookie.set_path("/");
+                cookies.add_private(cookie);
+            }
+
             return Redirect::to("/");
         } else {
             // User found - wrong password

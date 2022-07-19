@@ -7,7 +7,11 @@ extern crate rocket_contrib;
 
 use std::path::{Path, PathBuf};
 
-use rocket::{http::Cookies, response::NamedFile, Data, State};
+use rocket::{
+    http::Cookies,
+    response::{NamedFile, Redirect},
+    Data, State,
+};
 use rocket_contrib::templates::Template;
 use tera::Context;
 
@@ -20,21 +24,7 @@ use database::database_model::StateHandler;
 // Default entrypoint
 #[get("/")]
 fn index(mut cookies: Cookies, database: State<StateHandler>) -> Template {
-    let mut context = Context::new();
-
-    // call check_user_cookie
-    get_user_cookie(cookies, &mut context);
-
-    let mut posts: Vec<String> = vec![];
-    for post in database.posts.lock().unwrap().iter().rev() {
-        posts.push(post.title.clone());
-    }
-
-    context.insert("posts", &posts);
-
-    // context.insert("notifications", &vec!["Test Notification"]);
-    // context.insert("errors", &vec!["Cant login", "Error"]);
-    Template::render("posts/index", &context.into_json())
+    blog::index(cookies, database)
 }
 
 // Deliever assets
@@ -49,6 +39,10 @@ pub fn get_user_cookie(mut cookies: Cookies, context: &mut Context) {
         println!("get_user_cookie: {}", user.value());
         context.insert("user", user.value());
     }
+    if let Some(admin) = cookies.get_private("admin") {
+        println!("get_user_cookie: {}", admin.value());
+        context.insert("admin", admin.value());
+    }
 }
 
 // Setup rocket
@@ -57,7 +51,7 @@ fn build_rocket(db: StateHandler) -> rocket::Rocket {
         .manage(db)
         .mount("/", routes![index, files])
         .mount("/user", user::get_routes())
-        .mount("/post", blog::get_routes())
+        .mount("/posts", blog::get_routes())
         .attach(Template::fairing())
 }
 

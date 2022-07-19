@@ -3,12 +3,42 @@
 {% block main %}
 
 {% for post in posts %}
-<section class="section">
-    <h1 class="title">{{post}}</h1>
-    <h2 class="subtitle">
-        {{post}}
-    </h2>
-</section>
+<article class="section box">
+    <p class="title is-4">
+        <a href="/posts/read/{{post.uuid}}" class="has-text-danger">{{post.title}}</a>
+    </p>
+    <p class="subtitle has-text-grey" style="font-size: 0.8rem">{{post.date}} | <a href="/user/{{post.author}}"
+            class=" has-text-danger">{{post.author}}</a>
+
+        {% if user %}
+
+        {% if admin %}
+
+        {% if admin == "1" %}
+        | <a href="/posts/edit/{{post.uuid}}">Edit</a>
+        | <a href="/posts/delete/{{post.uuid}}">Delete</a>
+        {% endif %}
+
+        {% else %}
+
+        {% if post.author == user %}
+        | <a href="/posts/edit/{{post.uuid}}">Edit</a>
+        {% endif %}
+
+        {% endif %}
+
+        {% endif %}
+    </p>
+    <div class="content" style="display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;">
+        {{post.body}}
+    </div>
+    <div class="has-text-grey" style="font-size: 0.8rem">
+        Read the full post <a href="/posts/read/{{post.uuid}}" class="has-text-danger">here</a>
+    </div>
+</article>
 
 {% endfor %}
 

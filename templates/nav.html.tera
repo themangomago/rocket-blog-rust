@@ -21,7 +21,7 @@
 
         <div class="navbar-end">
             {% if user %}
-            <a class="navbar-item" href="/post/create">Create Post</a>
+            <a class="navbar-item" href="/posts/create">Create Post</a>
             <a class="navbar-item" href="/user/settings">Settings</a>
             <a class="navbar-item" href="/user/profile">Profile</a>
             <a class="navbar-item" href="/user/logout">Logout</a>
