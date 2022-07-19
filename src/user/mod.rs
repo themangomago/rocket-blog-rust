@@ -5,11 +5,11 @@ use rocket::State;
 use rocket_contrib::templates::Template;
 use tera::Context;
 
-use crate::database::model::StateHandler;
+use crate::database::database_model::StateHandler;
 use crate::{database, get_user_cookie};
 
-#[path = "model.rs"]
-pub mod model;
+#[path = "user_model.rs"]
+pub mod user_model;
 
 ////////////////////////////////////////////////////////////////////////////////
 /// Routes

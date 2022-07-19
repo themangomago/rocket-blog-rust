@@ -7,7 +7,7 @@ extern crate rocket_contrib;
 
 use std::path::{Path, PathBuf};
 
-use rocket::{http::Cookies, response::NamedFile, Data};
+use rocket::{http::Cookies, response::NamedFile, Data, State};
 use rocket_contrib::templates::Template;
 use tera::Context;
 
@@ -15,21 +15,25 @@ mod blog;
 mod database;
 mod user;
 
-use database::model::StateHandler;
+use database::database_model::StateHandler;
 
 // Default entrypoint
 #[get("/")]
-fn index(mut cookies: Cookies) -> Template {
+fn index(mut cookies: Cookies, database: State<StateHandler>) -> Template {
     let mut context = Context::new();
 
     // call check_user_cookie
     get_user_cookie(cookies, &mut context);
 
-    context.insert("test", "test2");
-    context.insert("posts", &vec!["post1", "post2", "post3"]);
+    let mut posts: Vec<String> = vec![];
+    for post in database.posts.lock().unwrap().iter().rev() {
+        posts.push(post.title.clone());
+    }
 
-    context.insert("notifications", &vec!["Test Notification"]);
-    context.insert("errors", &vec!["Cant login", "Error"]);
+    context.insert("posts", &posts);
+
+    // context.insert("notifications", &vec!["Test Notification"]);
+    // context.insert("errors", &vec!["Cant login", "Error"]);
     Template::render("posts/index", &context.into_json())
 }
 

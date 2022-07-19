@@ -12,6 +12,10 @@ Notifications to user via Flash:
 https://api.rocket.rs/v0.4/rocket/response/struct.Flash.html
 
 
+Protected routes:
+https://rocket.rs/v0.4/guide/requests/#request-guards
+
+
 
 
 Links:

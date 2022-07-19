@@ -1,6 +1,7 @@
 use std::{
     fs::File,
     io::{BufReader, BufWriter},
+    ops::{Deref, DerefMut},
     sync::Mutex,
 };
 
@@ -8,8 +9,7 @@ extern crate serde_json;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha512};
 
-use crate::blog::model::Post;
-use crate::user::model::User;
+use crate::{blog::post_model::Post, user::user_model::User};
 
 pub struct StateHandler {
     pub users: Mutex<Vec<User>>,
@@ -27,6 +27,15 @@ impl StateHandler {
     pub fn load_databases(&mut self) {
         self.load_user_database();
         self.load_post_database();
+    }
+
+    pub fn get_posts(&self) -> Vec<Post> {
+        self.posts.lock().unwrap().clone()
+    }
+
+    pub fn create_post(&mut self, post: Post) {
+        //TODO: this aint no work :(
+        self.posts.lock().unwrap().push(post);
     }
 
     pub fn get_user(&self, username: &str) -> Option<User> {
@@ -72,11 +81,36 @@ impl StateHandler {
         }
     }
 
-    fn save_user_database(&mut self) {
+    pub fn save_user_database(&self) {
         let file = File::create("database/users.json").unwrap();
         let mut writer = BufWriter::new(file);
         serde_json::to_writer_pretty(&mut writer, &self.users).unwrap();
     }
 
-    fn load_post_database(&mut self) {}
+    fn load_post_database(&mut self) {
+        let path = "database/posts.json";
+        if std::path::Path::new(path).exists() {
+            // Post database found - load it
+            let file = File::open(path).unwrap();
+            let mut reader = BufReader::new(file);
+            self.posts = serde_json::from_reader(&mut reader).unwrap();
+        } else {
+            // Post database not found - create one
+            let dummy_post: Post = Post::new(
+                "uuid".to_string(),
+                "admin".to_string(),
+                "Dummy post".to_string(),
+                "This is a dummy post".to_string(),
+            );
+            self.posts = Mutex::new(vec![dummy_post]);
+
+            self.save_post_database();
+        }
+    }
+
+    pub fn save_post_database(&self) {
+        let file = File::create("database/posts.json").unwrap();
+        let mut writer = BufWriter::new(file);
+        serde_json::to_writer_pretty(&mut writer, &self.posts).unwrap();
+    }
 }
