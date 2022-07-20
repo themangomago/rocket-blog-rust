@@ -1,12 +1,14 @@
 use rocket::http::{Cookie, Cookies};
-use rocket::request::Form;
-use rocket::response::Redirect;
+use rocket::request::{FlashMessage, Form};
+use rocket::response::{Flash, Redirect};
 use rocket::State;
 use rocket_contrib::templates::Template;
 use tera::Context;
 
 use crate::database::database_model::StateHandler;
-use crate::{database, get_user_cookie};
+use crate::{
+    add_flash_messages_to_context, add_user_cookie_to_context, database, FlashNotification,
+};
 
 #[path = "user_model.rs"]
 pub mod user_model;
@@ -22,15 +24,20 @@ pub struct Login {
 }
 
 #[get("/login")]
-fn login(cookies: Cookies) -> Template {
-    println!("login");
+fn login(flash: Option<FlashMessage>, cookies: Cookies) -> Template {
     let mut context = Context::new();
-    get_user_cookie(cookies, &mut context);
+    add_user_cookie_to_context(cookies, &mut context);
+    add_flash_messages_to_context(flash, &mut context);
+
     Template::render("user/login", &context.into_json())
 }
 
 #[post("/login", data = "<form>")]
-fn login_post(mut cookies: Cookies, form: Form<Login>, database: State<StateHandler>) -> Redirect {
+fn login_post(
+    mut cookies: Cookies,
+    form: Form<Login>,
+    database: State<StateHandler>,
+) -> Result<Flash<Redirect>, Flash<Redirect>> {
     let user = database.get_user(&form.username);
 
     if !user.is_none() {
@@ -47,20 +54,19 @@ fn login_post(mut cookies: Cookies, form: Form<Login>, database: State<StateHand
                 cookie.set_path("/");
                 cookies.add_private(cookie);
             }
-
-            return Redirect::to("/");
-        } else {
-            // User found - wrong password
-            // TODO: display error message
-            println!("Error: Wrong password");
-            return Redirect::to("/user/login");
+            println!("Login ok");
+            return Ok(Flash::success(
+                Redirect::to("/"),
+                format!("Welcome back, {}!", form.username),
+            ));
         }
-    } else {
-        // User not found
-        // TODO: display error message
-        println!("Error: User not found");
-        return Redirect::to("/user/login");
+        // User not found or password wrong
     }
+    println!("Login failed");
+    return Err(Flash::error(
+        Redirect::to("/user/login"),
+        "Error: User not found or password did not match.",
+    ));
 }
 
 #[get("/logout")]

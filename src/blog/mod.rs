@@ -1,5 +1,5 @@
 use rocket::http::{Cookie, Cookies};
-use rocket::request::Form;
+use rocket::request::{FlashMessage, Form};
 use rocket::response::Redirect;
 use rocket::State;
 use rocket_contrib::templates::Template;
@@ -7,7 +7,7 @@ use tera::Context;
 use uuid::Uuid;
 
 use crate::database::database_model::StateHandler;
-use crate::{database, get_user_cookie};
+use crate::{add_flash_messages_to_context, add_user_cookie_to_context, database};
 
 use self::post_model::Post;
 
@@ -31,16 +31,21 @@ fn create(mut cookies: Cookies) -> Template {
     }
 
     let mut context = Context::new();
-    get_user_cookie(cookies, &mut context);
+    //add_user_cookie_to_context(cookies, &mut context);
     Template::render("posts/create", &context.into_json())
 }
 
 #[get("/")]
-pub fn index(mut cookies: Cookies, database: State<StateHandler>) -> Template {
+pub fn index(
+    flash: Option<FlashMessage>,
+    mut cookies: Cookies,
+    database: State<StateHandler>,
+) -> Template {
     let mut context = Context::new();
 
     // call check_user_cookie
-    get_user_cookie(cookies, &mut context);
+    add_user_cookie_to_context(cookies, &mut context);
+    add_flash_messages_to_context(flash, &mut context);
 
     let mut posts: Vec<Post> = vec![];
     for post in database.posts.lock().unwrap().iter().rev() {

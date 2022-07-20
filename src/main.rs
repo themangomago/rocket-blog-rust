@@ -9,10 +9,12 @@ use std::path::{Path, PathBuf};
 
 use rocket::{
     http::Cookies,
+    request::FlashMessage,
     response::{NamedFile, Redirect},
     Data, State,
 };
 use rocket_contrib::templates::Template;
+use serde::Serialize;
 use tera::Context;
 
 mod blog;
@@ -21,10 +23,20 @@ mod user;
 
 use database::database_model::StateHandler;
 
+#[derive(Serialize)]
+pub struct FlashNotification<'a> {
+    pub severity: &'a str, // Name
+    pub message: &'a str,  // Msg
+}
+
 // Default entrypoint
 #[get("/")]
-fn index(mut cookies: Cookies, database: State<StateHandler>) -> Template {
-    blog::index(cookies, database)
+fn index(
+    flash: Option<FlashMessage>,
+    mut cookies: Cookies,
+    database: State<StateHandler>,
+) -> Template {
+    blog::index(flash, cookies, database)
 }
 
 // Deliever assets
@@ -34,7 +46,7 @@ fn files(file: PathBuf) -> Option<NamedFile> {
 }
 
 // Checks if user is logged in and provides user data to html context
-pub fn get_user_cookie(mut cookies: Cookies, context: &mut Context) {
+pub fn add_user_cookie_to_context(mut cookies: Cookies, context: &mut Context) {
     if let Some(user) = cookies.get_private("user") {
         println!("get_user_cookie: {}", user.value());
         context.insert("user", user.value());
@@ -42,6 +54,20 @@ pub fn get_user_cookie(mut cookies: Cookies, context: &mut Context) {
     if let Some(admin) = cookies.get_private("admin") {
         println!("get_user_cookie: {}", admin.value());
         context.insert("admin", admin.value());
+    }
+}
+
+// Checks for flash messages and provides flash data to html context
+pub fn add_flash_messages_to_context(flash: Option<FlashMessage>, context: &mut Context) {
+    println!("add_flash_messages_to_context");
+    if flash.is_some() {
+        let flash = flash.unwrap();
+        println!("get_flash_message: {}", flash.msg());
+        let message = FlashNotification {
+            severity: &flash.name(),
+            message: &flash.msg(),
+        };
+        context.insert("flash", &message);
     }
 }
 

@@ -1,13 +1,13 @@
-{% if errors %}
-{% for error in errors %}
+{% if flash %}
+{% if flash.severity == "error" %}
 <script>
-    bulmaToast.toast({ message: '{{ error }}', type: 'is-danger' })
+    bulmaToast.toast({ message: '{{ flash.message }}', type: 'is-danger' })
 </script>
-{% endfor %}
 {% endif %}
 
-{% if notifications %}
-{% for notification in notifications %}
-<script>bulmaToast.toast({ message: '{{ notification }}', type: 'is-info' })</script>
-{% endfor %}
+{% if flash.severity == "success" %}
+<script>
+    bulmaToast.toast({ message: '{{ flash.message }}', type: 'is-info' })
+</script>
+{% endif %}
 {% endif %}

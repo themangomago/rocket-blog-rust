@@ -3,18 +3,8 @@
 
 TODO:
 
-State Mutability:
-https://github.com/SergioBenitez/Rocket/issues/359
-https://github.com/SergioBenitez/Rocket/discussions/2043
-
-
-Notifications to user via Flash:
-https://api.rocket.rs/v0.4/rocket/response/struct.Flash.html
-
-
 Protected routes:
 https://rocket.rs/v0.4/guide/requests/#request-guards
-
 
 
 
