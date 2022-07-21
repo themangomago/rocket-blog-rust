@@ -7,6 +7,7 @@ use tera::Context;
 use uuid::Uuid;
 
 use crate::database::database_model::StateHandler;
+use crate::user::user_model::AuthenticatedUser;
 use crate::{add_flash_messages_to_context, add_user_cookie_to_context, database};
 
 use self::post_model::Post;
@@ -22,17 +23,6 @@ pub mod post_model;
 pub struct PostForm {
     pub title: String,
     pub content: String,
-}
-
-#[get("/create")]
-fn create(mut cookies: Cookies) -> Template {
-    if !cookies.get_private("user").is_some() {
-        println!("create: User not logged in");
-    }
-
-    let mut context = Context::new();
-    //add_user_cookie_to_context(cookies, &mut context);
-    Template::render("posts/create", &context.into_json())
 }
 
 #[get("/")]
@@ -53,27 +43,26 @@ pub fn index(
     }
 
     context.insert("posts", &posts);
-
-    // context.insert("notifications", &vec!["Test Notification"]);
-    // context.insert("errors", &vec!["Cant login", "Error"]);
     Template::render("posts/index", &context.into_json())
+}
+
+#[get("/create")]
+fn create(_user: AuthenticatedUser, cookies: Cookies) -> Template {
+    let mut context = Context::new();
+    add_user_cookie_to_context(cookies, &mut context);
+    Template::render("posts/create", &context.into_json())
 }
 
 #[post("/create", data = "<form>")]
 fn create_post(
-    mut cookies: Cookies,
+    user: AuthenticatedUser,
     form: Form<PostForm>,
     database: State<StateHandler>,
 ) -> Redirect {
-    let user = cookies.get_private("user");
-    if user.is_none() {
-        println!("create_post: User not logged in");
-        return Redirect::to("/user/login");
-    }
     let post: Post = Post::new(
         Uuid::new_v4().to_string(),
         chrono::Utc::now().format("%Y-%m-%d %H:%M:%S").to_string(),
-        user.unwrap().value().to_string(),
+        user.username.clone(),
         form.title.clone(),
         form.content.clone(),
     );
@@ -81,9 +70,6 @@ fn create_post(
     data.posts.lock().unwrap().push(post);
 
     database.save_post_database();
-
-    // println!("{}", &form.title);
-    // println!("{}", &form.content);
     return Redirect::to("/");
 }
 

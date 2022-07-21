@@ -3,9 +3,10 @@
 
 TODO:
 
-Protected routes:
-https://rocket.rs/v0.4/guide/requests/#request-guards
-
+- [ ] Add user / Delete user
+- [ ] Change password
+- [ ] Profile
+- [ ] Edit post (WYSIWYG-Editor?)
 
 
 Links:

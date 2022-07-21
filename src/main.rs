@@ -10,7 +10,7 @@ use std::path::{Path, PathBuf};
 use rocket::{
     http::Cookies,
     request::FlashMessage,
-    response::{NamedFile, Redirect},
+    response::{Flash, NamedFile, Redirect},
     Data, State,
 };
 use rocket_contrib::templates::Template;
@@ -43,6 +43,21 @@ fn index(
 #[get("/assets/<file..>")]
 fn files(file: PathBuf) -> Option<NamedFile> {
     NamedFile::open(Path::new("assets/").join(file)).ok()
+}
+
+use rocket::Request;
+
+#[catch(401)]
+fn not_authorized(req: &Request) -> Flash<Redirect> {
+    return Flash::error(
+        Redirect::to("/user/login"),
+        "Error: Not authorized to do this action.",
+    );
+}
+
+#[catch(404)]
+fn not_found(_req: &Request) -> Template {
+    return Template::render("error/404", Context::new().into_json());
 }
 
 // Checks if user is logged in and provides user data to html context
@@ -78,6 +93,7 @@ fn build_rocket(db: StateHandler) -> rocket::Rocket {
         .mount("/", routes![index, files])
         .mount("/user", user::get_routes())
         .mount("/posts", blog::get_routes())
+        .register(catchers![not_authorized, not_found])
         .attach(Template::fairing())
 }
 

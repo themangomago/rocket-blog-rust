@@ -1,7 +1,12 @@
+use rocket::http::Status;
+use rocket::outcome::Outcome::*;
+use rocket::request::{self, FlashMessage, Form, FromRequest, Request, State};
+use rocket::response::{Flash, Redirect};
+use rocket::Outcome;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha512};
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct User {
     pub name: String,
     pub profile: String,
@@ -9,7 +14,24 @@ pub struct User {
     pub credentials: UserCredentials,
 }
 
-#[derive(Serialize, Deserialize)]
+pub struct AuthenticatedUser {
+    pub username: String,
+}
+
+impl<'a, 'r> FromRequest<'a, 'r> for AuthenticatedUser {
+    type Error = ();
+    fn from_request(request: &'a Request<'r>) -> request::Outcome<AuthenticatedUser, Self::Error> {
+        let mut cookies = request.cookies();
+        if let Some(user) = cookies.get_private("user") {
+            return Success(AuthenticatedUser {
+                username: user.value().to_string(),
+            });
+        }
+        Failure((Status::raw(401), ()))
+    }
+}
+
+#[derive(Serialize, Deserialize, Clone)]
 pub struct UserCredentials {
     pub username: String,
     pub password_hash: String,
@@ -40,6 +62,14 @@ impl User {
                 username: username,
                 password_hash: password_hash,
             },
+        }
+    }
+
+    pub fn get_user(&self, username: &str) -> Option<User> {
+        if self.credentials.username == username {
+            Some(self.clone())
+        } else {
+            None
         }
     }
 
