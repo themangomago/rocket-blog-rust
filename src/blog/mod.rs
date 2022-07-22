@@ -25,8 +25,9 @@ pub struct PostForm {
     pub content: String,
 }
 
-#[get("/")]
+#[get("/<page>")]
 pub fn index(
+    page: u32,
     flash: Option<FlashMessage>,
     mut cookies: Cookies,
     database: State<StateHandler>,
@@ -38,11 +39,18 @@ pub fn index(
     add_flash_messages_to_context(flash, &mut context);
 
     let mut posts: Vec<Post> = vec![];
-    for post in database.posts.lock().unwrap().iter().rev() {
-        posts.push(post.clone());
-    }
 
+    let entries_per_page = 5;
+
+    for i in (page * entries_per_page)..(page * entries_per_page + entries_per_page) {
+        if i < database.posts.lock().unwrap().len() as u32 {
+            posts.push(database.posts.lock().unwrap()[i as usize].clone());
+        }
+    }
+    let total_pages: u32 = (database.posts.lock().unwrap().len() + 1) as u32 / 2;
     context.insert("posts", &posts);
+    context.insert("current_page", &page);
+    context.insert("total_pages", &total_pages);
     Template::render("posts/index", &context.into_json())
 }
 
@@ -67,7 +75,9 @@ fn create_post(
         form.content.clone(),
     );
     let data = database.inner();
+    data.posts.lock().unwrap().reverse();
     data.posts.lock().unwrap().push(post);
+    data.posts.lock().unwrap().reverse();
 
     database.save_post_database();
     return Redirect::to("/");

@@ -36,7 +36,7 @@ fn index(
     mut cookies: Cookies,
     database: State<StateHandler>,
 ) -> Template {
-    blog::index(flash, cookies, database)
+    blog::index(0, flash, cookies, database)
 }
 
 // Deliever assets

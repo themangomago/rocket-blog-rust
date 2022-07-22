@@ -42,4 +42,50 @@
 
 {% endfor %}
 
+
+{% set prev_available = "" %}
+{% set next_available = "" %}
+
+{% if current_page == 0 %}
+{% set prev_available = "is-disabled" %}
+{% endif %}
+
+{% if current_page == total_pages - 1 %}
+{% set next_available="is-disabled" %}
+{% endif %}
+
+
+<nav class="pagination is-centered" role="navigation" aria-label="pagination">
+    <a class="pagination-previous {{prev_available}}" href="/posts/{{current_page - 1}}">Previous</a>
+    <a class="pagination-next {{next_available}}" href="/posts/{{current_page + 1}}">Next page</a>
+    <ul class="pagination-list">
+        {% if total_pages >= 3 %}
+        {% if current_page == 0 %}
+        <li><a class="pagination-link is-current" href="/posts/0" aria-label="Goto page 1">1</a></li>
+        <li><a class="pagination-link" href="/posts/1" aria-label="Page 2" aria-current="page">2</a></li>
+        <li><a class="pagination-link" href="/posts/2" aria-label="Goto page 3">3</a></li>
+        {% elif current_page == total_pages - 1 %}
+        <li><a class="pagination-link" href="/posts/{{total_pages - 3}}" aria-label="Page {{total_pages - 2}}"
+                aria-current="page">{{total_pages - 2}}</a></li>
+        <li><a class="pagination-link" href="/posts/{{total_pages - 2}}" aria-label="Page {{total_pages - 1}}"
+                aria-current="page">{{total_pages - 1}}</a></li>
+        <li><a class="pagination-link is-current" href="/posts/{{total_pages - 1}}" aria-label="Page {{total_pages}}"
+                aria-current="page">{{total_pages}}</a></li>
+        {% else %}
+        <li><a class="pagination-link" href="/posts/{{current_page - 1}}"
+                aria-label="Goto page {{current_page}}">{{current_page}}</a></li>
+        <li><a class="pagination-link is-current" href="/posts/{{current_page}}" aria-label="Page {{current_page + 1}}"
+                aria-current="page">{{current_page + 1 }}</a></li>
+        <li><a class="pagination-link" href="/posts/{{current_page + 1}}"
+                aria-label="Goto page {{current_page + 2}}">{{current_page + 2}}</a></li>
+        {% endif %}
+
+
+
+
+        {% endif %}
+    </ul>
+</nav>
+
+
 {% endblock main %}

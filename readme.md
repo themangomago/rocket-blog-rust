@@ -7,6 +7,7 @@ TODO:
 - [ ] Change password
 - [ ] Profile
 - [ ] Edit post (WYSIWYG-Editor?)
+- [x] Pagination
 
 
 Links:
