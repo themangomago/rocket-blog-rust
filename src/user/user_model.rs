@@ -9,9 +9,16 @@ use sha2::{Digest, Sha512};
 #[derive(Serialize, Deserialize, Clone)]
 pub struct User {
     pub name: String,
-    pub profile: String,
     pub admin_rights: u8,
+    pub profile: UserProfile,
     pub credentials: UserCredentials,
+}
+
+#[derive(Serialize, Deserialize, Clone)]
+pub struct UserProfile {
+    pub bio: String,
+    pub twitter: String,
+    pub github: String,
 }
 
 pub struct AuthenticatedUser {
@@ -49,14 +56,20 @@ impl UserCredentials {
 impl User {
     pub fn new(
         name: String,
-        profile: String,
         admin_rights: u8,
+        user_bio: String,
+        user_twitter: String,
+        user_github: String,
         username: String,
         password_hash: String,
     ) -> User {
         User {
             name,
-            profile,
+            profile: UserProfile {
+                bio: user_bio,
+                twitter: user_twitter,
+                github: user_github,
+            },
             admin_rights,
             credentials: UserCredentials {
                 username: username,
@@ -75,9 +88,5 @@ impl User {
 
     pub fn get_name(&self) -> String {
         self.name.clone()
-    }
-
-    pub fn get_profile(&self) -> String {
-        self.profile.clone()
     }
 }

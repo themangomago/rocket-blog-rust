@@ -1,9 +1,10 @@
 <footer class="footer">
     <div class="content has-text-centered">
         <p>
-            <strong>Rocket Blog</strong> is powered by <a href="https://www.rust-lang.org/">Rust</a> and <a
-                href="https://rocket.rs/">Rocket</a>. The source code is licensed
-            <a href="http://opensource.org/licenses/mit-license.php">MIT</a>.
+            <strong>Rocket Blog</strong> is powered by <a href="https://www.rust-lang.org/"
+                class="has-text-danger">Rust</a> and <a href="https://rocket.rs/" class="has-text-danger">Rocket</a>.
+            The source code is licensed
+            <a href="http://opensource.org/licenses/mit-license.php" class="has-text-danger">MIT</a>.
         </p>
     </div>
 </footer>

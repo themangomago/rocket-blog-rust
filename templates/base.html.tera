@@ -6,14 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Blog-Rust</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="/assets/css/rocket.css">
     <script src="/assets/js/bulma-toast.min.js"></script>
 </head>
 
 <body class="has-navbar-fixed-top">
     {% include "nav" %}
-
     <div class="container">
         {% block main %}{% endblock main %}
     </div>
@@ -31,6 +29,8 @@
         });
     </script>
     {% include "toast" %}
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
 </body>
 
 </html>

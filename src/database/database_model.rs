@@ -45,8 +45,10 @@ impl StateHandler {
                 //name: String, profile: String, username: String, password_hash: String
                 let user: User = User::new(
                     user.name.clone(),
-                    user.profile.clone(),
                     user.admin_rights,
+                    user.profile.bio.clone(),
+                    user.profile.twitter.clone(),
+                    user.profile.github.clone(),
                     user.credentials.username.clone(),
                     user.credentials.password_hash.clone(),
                 );
@@ -71,8 +73,10 @@ impl StateHandler {
 
             let dummy_user = User::new(
                 "John Doe".to_string(),
-                "This is a dummy user".to_string(),
                 1,
+                "Admin account, please delete me after adding real users".to_string(),
+                "themangomago".to_string(),
+                "themangomago".to_string(),
                 "admin".to_string(),
                 password_hash,
             );

@@ -8,7 +8,7 @@ TODO:
 - [ ] Profile
 - [ ] Edit post (WYSIWYG-Editor?)
 - [x] Pagination
-
+- [ ] Subpages don't get user data
 
 Links:
 

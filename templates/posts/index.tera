@@ -15,14 +15,20 @@
         {% if admin %}
 
         {% if admin == "1" %}
-        | <a href="/posts/edit/{{post.uuid}}">Edit</a>
-        | <a href="/posts/delete/{{post.uuid}}">Delete</a>
+        | <a href="/posts/edit/{{post.uuid}}">
+            <ion-icon name="pencil-outline"></ion-icon>
+        </a>
+        | <a href="/posts/delete/{{post.uuid}}">
+            <ion-icon name="trash-outline"></ion-icon>
+        </a>
         {% endif %}
 
         {% else %}
 
         {% if post.author == user %}
-        | <a href="/posts/edit/{{post.uuid}}">Edit</a>
+        | <a href="/posts/edit/{{post.uuid}}">
+            <ion-icon name="pencil-outline"></ion-icon>
+        </a>
         {% endif %}
 
         {% endif %}

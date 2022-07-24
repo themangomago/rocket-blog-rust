@@ -1,1 +1,53 @@
-profile
+{% extends "base" %}
+
+{% block main %}
+<div class="columns is-centered">
+    <div class="column is-four-fiths box">
+        <nav class="breadcrumb is-small" aria-label="breadcrumbs">
+            <ul>
+                <li>Profile</li>
+                <li>{user.name}</li>
+            </ul>
+        </nav>
+        <div class="content">
+            <p class="title">{user.username}</p>
+            <p class="subtitle is-5">{user.profile.bio}</p>
+        </div>
+        <footer class="card-footer">
+            <p class="card-footer-item">
+                <span class="icon-text">
+                    <span class="icon">
+                        <ion-icon name="logo-twitter"></ion-icon>
+                    </span>
+                    <span>{user.profile.twitter}</span>
+                </span>
+            </p>
+
+            <p class="card-footer-item">
+                <span class="icon-text">
+                    <span class="icon">
+                        <ion-icon name="logo-github"></ion-icon>
+                    </span>
+                    <span>{user.profile.github}</span>
+                </span>
+            </p>
+        </footer>
+    </div>
+</div>
+
+<div class="columns is-centered">
+    <div class="column is-four-fiths box">
+        <p class="subtitle is-5">Recent Posts</p>
+        <div class="content">
+            <article class="panel">
+                <a href="/" class="panel-block">
+                    bulma
+                </a>
+                <a href="/" class="panel-block">
+                    marksheet
+                </a>
+            </article>
+        </div>
+    </div>
+</div>
+{% endblock main %}

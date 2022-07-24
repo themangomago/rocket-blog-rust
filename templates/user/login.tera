@@ -9,7 +9,7 @@
                 <div class="control has-icons-left">
                     <input name="username" class="input" type="text" placeholder="name" required>
                     <span class="icon is-small is-left">
-                        <i class="fa fa-envelope"></i>
+                        <ion-icon name="person-outline"></ion-icon>
                     </span>
                 </div>
 
@@ -19,7 +19,7 @@
                 <div class="control has-icons-left">
                     <input name="password" class="input" type="password" placeholder="******" required>
                     <span class="icon is-small is-left">
-                        <i class="fa fa-lock"></i>
+                        <ion-icon name="lock-closed-outline"></ion-icon>
                     </span>
                 </div>
             </div>

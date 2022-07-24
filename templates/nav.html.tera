@@ -1,7 +1,9 @@
 <nav class="navbar is-fixed-top is-danger" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
         <a class="navbar-item" href="/">
-            <p class="image"><img src="/assets/rocket-svgrepo-com.svg" alt="Rocket Blog" /></p>
+            <p class="image" style="font-size: 24px;">
+                <ion-icon name="rocket-outline"></ion-icon>
+            </p>
             <p style="margin-left: 8px">Rocket Blog</p>
         </a>
 
