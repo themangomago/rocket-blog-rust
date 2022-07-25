@@ -70,6 +70,19 @@ impl StateHandler {
         None
     }
 
+    pub fn get_user_id_by_username(&self, username: String) -> Option<usize> {
+        for (i, user) in self.users.lock().unwrap().iter().enumerate() {
+            if user.credentials.username == username {
+                return Some(i);
+            }
+        }
+        None
+    }
+
+    pub fn get_user_by_id(&self, id: usize) -> Option<User> {
+        self.users.lock().unwrap().get(id).cloned()
+    }
+
     pub fn get_user(&self, username: &str) -> Option<User> {
         for user in self.users.lock().unwrap().iter() {
             if user.credentials.username == username {

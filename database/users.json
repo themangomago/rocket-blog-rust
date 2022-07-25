@@ -13,10 +13,10 @@
     }
   },
   {
-    "name": "John Smith",
+    "name": "John Doe Smith",
     "admin_rights": 0,
     "profile": {
-      "bio": "Dummy test user. No admin.",
+      "bio": "<p>Dummy test user. No admin.</p>",
       "twitter": "smithjohn",
       "github": "smithjohn"
     },

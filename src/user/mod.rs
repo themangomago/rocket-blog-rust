@@ -12,7 +12,7 @@ use crate::{
     add_flash_messages_to_context, add_user_cookie_to_context, database, FlashNotification,
 };
 
-use self::user_model::{AuthenticatedUser, UserProfile};
+use self::user_model::{AuthenticatedUser, UserCredentials, UserProfile};
 
 #[path = "user_model.rs"]
 pub mod user_model;
@@ -25,6 +25,14 @@ pub mod user_model;
 pub struct Login {
     pub username: String,
     pub password: String,
+}
+
+#[derive(FromForm)]
+pub struct SettingsProfileForm {
+    pub profile_name: String,
+    pub profile_bio: String,
+    pub profile_twitter: String,
+    pub profile_github: String,
 }
 
 #[get("/login")]
@@ -80,15 +88,6 @@ fn logout(mut cookies: Cookies) -> Redirect {
     Redirect::to("/")
 }
 
-#[get("/settings")]
-fn settings(user: AuthenticatedUser, cookies: Cookies) -> Template {
-    let mut context = Context::new();
-    add_user_cookie_to_context(cookies, &mut context);
-
-    //    context.insert("user", &user);
-    Template::render("user/settings", &context.into_json())
-}
-
 #[get("/profile/<username>")]
 fn profile(
     username: String,
@@ -131,6 +130,78 @@ fn your_profile(
     profile(user.username, cookies, database).unwrap()
 }
 
+#[get("/settings")]
+fn settings(user: AuthenticatedUser, cookies: Cookies, database: State<StateHandler>) -> Template {
+    let mut context = Context::new();
+    add_user_cookie_to_context(cookies, &mut context);
+
+    // Fetch profile infos
+    let user = database.get_user(&user.username);
+    if !user.is_none() {
+        let user_data = user.unwrap();
+        let user = User {
+            name: user_data.name,
+            credentials: UserCredentials {
+                username: user_data.credentials.username,
+                password_hash: "".to_string(),
+            },
+            profile: user_data.profile,
+            admin_rights: user_data.admin_rights,
+        };
+        context.insert("user", &user);
+    }
+
+    Template::render("user/settings", &context.into_json())
+}
+
+#[post("/update_profile", data = "<form>")]
+fn update_profile(
+    user: AuthenticatedUser,
+    form: Form<SettingsProfileForm>,
+    database: State<StateHandler>,
+) -> Result<Redirect, Status> {
+    let user_id = database.get_user_id_by_username(user.username.clone());
+    let user_data = database.get_user_by_id(user_id.unwrap());
+
+    if user_data.is_some() {
+        let user_data = user_data.unwrap();
+
+        if user.username == user_data.credentials.username {
+            let user = User {
+                name: form.profile_name.clone(),
+                credentials: UserCredentials {
+                    username: user_data.credentials.username.clone(),
+                    password_hash: user_data.credentials.password_hash.clone(),
+                },
+                profile: UserProfile {
+                    bio: form.profile_bio.clone(),
+                    twitter: form.profile_twitter.clone(),
+                    github: form.profile_github.clone(),
+                },
+                admin_rights: user_data.admin_rights,
+            };
+
+            let data = database.inner();
+            data.users.lock().unwrap()[user_id.unwrap() as usize] = user;
+            database.save_user_database();
+
+            return Ok(Redirect::to("/user/settings"));
+        } else {
+            return Err(Status::Unauthorized);
+        }
+    }
+
+    Ok(Redirect::to("/user/settings"))
+}
+
 pub fn get_routes() -> Vec<rocket::Route> {
-    routes![login, login_post, logout, your_profile, profile, settings]
+    routes![
+        login,
+        login_post,
+        logout,
+        your_profile,
+        profile,
+        settings,
+        update_profile
+    ]
 }

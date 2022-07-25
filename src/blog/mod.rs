@@ -110,7 +110,7 @@ fn edit(
     add_user_cookie_to_context(cookies, &mut context);
 
     let post = database.get_post_by_uuid(uuid.to_string());
-    if !post.is_none() {
+    if post.is_some() {
         let post = post.unwrap();
 
         // Check if user is the author or has admin rights
@@ -133,7 +133,7 @@ fn edit_post(
     let post_id = database.get_post_id_by_uuid(form.uuid.clone());
     let post = database.get_post_by_id(post_id.unwrap());
 
-    if !post.is_none() {
+    if post.is_some() {
         let mut post = post.unwrap();
 
         // Check if user is the author or has admin rights
