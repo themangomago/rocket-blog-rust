@@ -7,7 +7,7 @@
     <p class="title is-4">
         <a href="/posts/read/{{post.uuid}}" class="has-text-danger">{{post.title}}</a>
     </p>
-    <p class="subtitle has-text-grey" style="font-size: 0.8rem">{{post.date}} | <a href="/user/{{post.author}}"
+    <p class="subtitle has-text-grey" style="font-size: 0.8rem">{{post.date}} | <a href="/user/profile/{{post.author}}"
             class=" has-text-danger">{{post.author}}</a>
 
         {% if user %}

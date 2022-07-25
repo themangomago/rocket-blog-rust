@@ -12,7 +12,7 @@ use crate::{
     add_flash_messages_to_context, add_user_cookie_to_context, database, FlashNotification,
 };
 
-use self::user_model::AuthenticatedUser;
+use self::user_model::{AuthenticatedUser, UserProfile};
 
 #[path = "user_model.rs"]
 pub mod user_model;
@@ -80,24 +80,55 @@ fn logout(mut cookies: Cookies) -> Redirect {
     Redirect::to("/")
 }
 
-#[get("/profile/<username>")]
-fn profile(username: &RawStr) -> Template {
-    let mut context = Context::new();
-    Template::render("user/profile", &context.into_json())
-}
-
-#[get("/profile")]
-fn your_profile() -> Template {
-    let mut context = Context::new();
-    Template::render("user/profile", &context.into_json())
-}
-
 #[get("/settings")]
 fn settings(user: AuthenticatedUser, cookies: Cookies) -> Template {
     let mut context = Context::new();
     add_user_cookie_to_context(cookies, &mut context);
+
     //    context.insert("user", &user);
     Template::render("user/settings", &context.into_json())
+}
+
+#[get("/profile/<username>")]
+fn profile(
+    username: String,
+    cookies: Cookies,
+    database: State<StateHandler>,
+) -> Result<Template, Status> {
+    let mut context = Context::new();
+    add_user_cookie_to_context(cookies, &mut context);
+
+    // Fetch profile infos
+    let user = database.get_user(&username);
+    if !user.is_none() {
+        let user = user.unwrap();
+        context.insert("username", &user.name);
+
+        context.insert("userhandle", &username);
+
+        let user_profile = UserProfile {
+            bio: user.profile.bio,
+            twitter: user.profile.twitter,
+            github: user.profile.github,
+        };
+        context.insert("profile", &user_profile);
+
+        // Get 5 latest posts from user
+        let posts = database.get_posts_by_user(&username);
+        context.insert("posts", &posts);
+
+        return Ok(Template::render("user/profile", &context.into_json()));
+    }
+    return Err(Status::NotFound);
+}
+
+#[get("/profile")]
+fn your_profile(
+    user: AuthenticatedUser,
+    cookies: Cookies,
+    database: State<StateHandler>,
+) -> Template {
+    profile(user.username, cookies, database).unwrap()
 }
 
 pub fn get_routes() -> Vec<rocket::Route> {

@@ -6,12 +6,12 @@
         <nav class="breadcrumb is-small" aria-label="breadcrumbs">
             <ul>
                 <li>Profile</li>
-                <li>{user.name}</li>
+                <li>{{userhandle}}</li>
             </ul>
         </nav>
         <div class="content">
-            <p class="title">{user.username}</p>
-            <p class="subtitle is-5">{user.profile.bio}</p>
+            <p class="title">{{username}} (@{{userhandle}})</p>
+            <p class="subtitle is-5">{{profile.bio}}</p>
         </div>
         <footer class="card-footer">
             <p class="card-footer-item">
@@ -19,7 +19,8 @@
                     <span class="icon">
                         <ion-icon name="logo-twitter"></ion-icon>
                     </span>
-                    <span>{user.profile.twitter}</span>
+                    <span><a href="https://twitter.com/{{profile.twitter}}"
+                            class="has-text-danger">{{profile.twitter}}</a></span>
                 </span>
             </p>
 
@@ -28,7 +29,8 @@
                     <span class="icon">
                         <ion-icon name="logo-github"></ion-icon>
                     </span>
-                    <span>{user.profile.github}</span>
+                    <span><a href="https://github.com/{{profile.github}}"
+                            class="has-text-danger">{{profile.github}}</a></span>
                 </span>
             </p>
         </footer>
@@ -40,12 +42,20 @@
         <p class="subtitle is-5">Recent Posts</p>
         <div class="content">
             <article class="panel">
-                <a href="/" class="panel-block">
-                    bulma
+                {% if posts | length > 0 %}
+                {% for post in posts %}
+                <a href="/posts/read/{{post.uuid}}" class="panel-block">
+                    {{post.title}}
                 </a>
-                <a href="/" class="panel-block">
-                    marksheet
+
+                {% endfor %}
+                {% else %}
+                <a class="panel-block">
+                    This user has no posts written yet.
                 </a>
+                {% endif %}
+
+
             </article>
         </div>
     </div>

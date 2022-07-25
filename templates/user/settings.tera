@@ -1,1 +1,136 @@
-settings
+{% extends "base" %}
+
+{% block main %}
+<div class="columns is-centered">
+    <div class="column is-four-fiths box">
+        <nav class="breadcrumb is-small" aria-label="breadcrumbs">
+            <ul>
+                <li>Settings</li>
+                <li>User Settings</li>
+            </ul>
+        </nav>
+        <div class="content">
+            <p class="title is-5">Profile {userhandle}</p>
+            <form class="box" id="update_profile" method="post" action="update_profile">
+                <div class="field">
+                    <label for="" class="label">Name</label>
+                    <div class="control has-icons-left">
+                        <input name="name" class="input" type="text" value="Name" required>
+                        <span class="icon is-small is-left">
+                            <ion-icon name="person-outline"></ion-icon>
+                        </span>
+                    </div>
+                </div>
+                <div class="field">
+                    <label for="" class="label">Bio</label>
+                    <div id="editor">
+                        {profile.bio}
+                    </div>
+                    <textarea id="profile-bio" hidden name="profile-bio"></textarea>
+                    <script src="https://cdn.quilljs.com/1.0.0/quill.js"></script>
+                    <script>
+                        var quill = new Quill('#editor', {
+                            modules: {
+                                toolbar: [
+                                    [{ header: [1, 2, false] }],
+                                    ['bold', 'italic', 'underline'],
+                                    ['code-block', 'link']
+                                ]
+                            },
+                            theme: 'snow',
+                        });
+
+                        function updateTextarea() {
+                            document.getElementById('profile-bio').value = quill.root.innerHTML;
+                        }
+                        updateTextarea();
+
+                        quill.on('text-change', function (delta, oldDelta, source) {
+                            updateTextarea();
+                        });
+                    </script>
+                </div>
+                <div class="field">
+                    <label for="" class="label">Twitter Handle</label>
+                    <div class="control has-icons-left">
+                        <input name="profile_twitter" class="input" type="text" value="{profile.twitter}" required>
+                        <span class="icon is-small is-left">
+                            <ion-icon name="logo-twitter"></ion-icon>
+                        </span>
+                    </div>
+                </div>
+                <div class="field">
+                    <label for="" class="label">Github Handle</label>
+                    <div class="control has-icons-left">
+                        <input name="profile_github" class="input" type="text" value="{profile.github}" required>
+                        <span class="icon is-small is-left">
+                            <ion-icon name="logo-github"></ion-icon>
+                        </span>
+                    </div>
+                </div>
+                <div class="field">
+                    <button type="submit" class="button is-danger">Update</button>
+                </div>
+            </form>
+
+            <p class="title is-5">Password</p>
+            <form class="box" id="update_password" method="post" action="update_password">
+                <div class="field">
+                    <label for="" class="label">Old Password</label>
+                    <div class="control has-icons-left">
+                        <input name="password" class="input" type="password" placeholder="******" required>
+                        <span class="icon is-small is-left">
+                            <ion-icon name="lock-closed-outline"></ion-icon>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="" class="label">New Password</label>
+                    <div class="control has-icons-left">
+                        <input name="password" class="input" type="password" placeholder="******" required>
+                        <span class="icon is-small is-left">
+                            <ion-icon name="lock-closed-outline"></ion-icon>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="" class="label">Confirm New Password</label>
+                    <div class="control has-icons-left">
+                        <input name="password" class="input" type="password" placeholder="******" required>
+                        <span class="icon is-small is-left">
+                            <ion-icon name="lock-closed-outline"></ion-icon>
+                        </span>
+                    </div>
+                </div>
+                <div class="field">
+                    <button type="submit" class="button is-danger">Update</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<div class="columns is-centered">
+    <div class="column is-four-fiths box">
+        <nav class="breadcrumb is-small" aria-label="breadcrumbs">
+            <ul>
+                <li>Settings</li>
+                <li>User Management</li>
+            </ul>
+        </nav>
+        <div class="content">
+            <p class="title is-5">Admin Area</p>
+            <p class="content">Be careful with your actions, they cannot be undone.</p>
+
+            <p class="title is-5">Manage Users</p>
+
+            <p class="title is-5">Add New User</p>
+
+        </div>
+    </div>
+</div>
+
+{% endblock main %}

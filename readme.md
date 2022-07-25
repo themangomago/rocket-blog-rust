@@ -5,10 +5,9 @@ TODO:
 
 - [ ] Add user / Delete user
 - [ ] Change password
-- [ ] Profile
+- [x] Profile
 - [ ] Edit post (WYSIWYG-Editor?)
 - [x] Pagination
-- [ ] Subpages don't get user data
 
 Links:
 

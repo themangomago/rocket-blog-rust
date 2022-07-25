@@ -58,6 +58,19 @@ impl StateHandler {
         None
     }
 
+    pub fn get_posts_by_user(&self, username: &str) -> Vec<Post> {
+        let mut posts = Vec::new();
+        for post in self.posts.lock().unwrap().iter() {
+            if post.author == username {
+                posts.push(post.clone());
+                if posts.len() == 5 {
+                    break;
+                }
+            }
+        }
+        posts
+    }
+
     fn load_user_database(&mut self) {
         let path = "database/users.json";
         if std::path::Path::new(path).exists() {
