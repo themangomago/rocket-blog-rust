@@ -1,4 +1,4 @@
-use rocket::http::{Cookie, Cookies};
+use rocket::http::{Cookie, Cookies, RawStr, Status};
 use rocket::request::{FlashMessage, Form};
 use rocket::response::Redirect;
 use rocket::State;
@@ -23,6 +23,13 @@ pub mod post_model;
 pub struct PostForm {
     pub title: String,
     pub content: String,
+}
+
+#[derive(FromForm)]
+pub struct PostEditForm {
+    pub title: String,
+    pub content: String,
+    pub uuid: String,
 }
 
 #[get("/<page>")]
@@ -54,6 +61,15 @@ pub fn index(
     Template::render("posts/index", &context.into_json())
 }
 
+#[get("/read/<uuid>")]
+fn read(uuid: &RawStr, cookies: Cookies, database: State<StateHandler>) -> Template {
+    let mut context = Context::new();
+    add_user_cookie_to_context(cookies, &mut context);
+    let post = database.get_post(uuid.to_string());
+    context.insert("post", &post);
+    Template::render("posts/read", &context.into_json())
+}
+
 #[get("/create")]
 fn create(_user: AuthenticatedUser, cookies: Cookies) -> Template {
     let mut context = Context::new();
@@ -83,6 +99,59 @@ fn create_post(
     return Redirect::to("/");
 }
 
+#[get("/edit/<uuid>")]
+fn edit(
+    user: AuthenticatedUser,
+    cookies: Cookies,
+    uuid: &RawStr,
+    database: State<StateHandler>,
+) -> Result<Template, Status> {
+    let mut context = Context::new();
+    add_user_cookie_to_context(cookies, &mut context);
+
+    let post = database.get_post_by_uuid(uuid.to_string());
+    if !post.is_none() {
+        let post = post.unwrap();
+
+        // Check if user is the author or has admin rights
+        if user.admin_rights > 0 || user.username == post.author {
+            context.insert("post", &post);
+        } else {
+            return Err(Status::Forbidden);
+        }
+    }
+
+    Ok(Template::render("posts/edit", &context.into_json()))
+}
+
+#[post("/edit", data = "<form>")]
+fn edit_post(
+    user: AuthenticatedUser,
+    form: Form<PostEditForm>,
+    database: State<StateHandler>,
+) -> Redirect {
+    let post_id = database.get_post_id_by_uuid(form.uuid.clone());
+    let post = database.get_post_by_id(post_id.unwrap());
+
+    if !post.is_none() {
+        let mut post = post.unwrap();
+
+        // Check if user is the author or has admin rights
+        if user.admin_rights > 0 || user.username == post.author {
+            // Update post
+            post.title = form.title.clone();
+            post.body = form.content.clone();
+            let data = database.inner();
+            data.posts.lock().unwrap()[post_id.unwrap() as usize] = post;
+
+            // Persist post database
+            database.save_post_database();
+        }
+    }
+
+    return Redirect::to("/");
+}
+
 pub fn get_routes() -> Vec<rocket::Route> {
-    routes![index, create, create_post]
+    routes![index, create, create_post, edit, edit_post, read]
 }

@@ -13,12 +13,12 @@
     }
   },
   {
-    "name": "John Doe2",
-    "admin_rights": 1,
+    "name": "John Smith",
+    "admin_rights": 0,
     "profile": {
-      "bio": "2",
-      "twitter": "themangomago2",
-      "github": "themangomago2"
+      "bio": "Dummy test user. No admin.",
+      "twitter": "smithjohn",
+      "github": "smithjohn"
     },
     "credentials": {
       "username": "admin2",

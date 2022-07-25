@@ -1,0 +1,44 @@
+{% extends "base" %}
+
+{% block main %}
+
+<article class="section box">
+    <p class="title is-4">
+        <a class="has-text-danger">{{post.title}}</a>
+    </p>
+    <p class="subtitle has-text-grey" style="font-size: 0.8rem">{{post.date}} | <a href="/user/profile/{{post.author}}"
+            class=" has-text-danger">{{post.author}}</a>
+
+        {% if user %}
+
+        {% if admin %}
+
+        {% if admin == "1" %}
+        | <a href="/posts/edit/{{post.uuid}}">
+            <ion-icon name="pencil-outline"></ion-icon>
+        </a>
+        | <a href="/posts/delete/{{post.uuid}}">
+            <ion-icon name="trash-outline"></ion-icon>
+        </a>
+        {% endif %}
+
+        {% else %}
+
+        {% if post.author == user %}
+        | <a href="/posts/edit/{{post.uuid}}">
+            <ion-icon name="pencil-outline"></ion-icon>
+        </a>
+        {% endif %}
+
+        {% endif %}
+
+        {% endif %}
+    </p>
+    <div class="content">
+        {{post.body}}
+    </div>
+</article>
+
+
+
+{% endblock main %}

@@ -23,6 +23,7 @@ pub struct UserProfile {
 
 pub struct AuthenticatedUser {
     pub username: String,
+    pub admin_rights: u8,
 }
 
 impl<'a, 'r> FromRequest<'a, 'r> for AuthenticatedUser {
@@ -30,8 +31,14 @@ impl<'a, 'r> FromRequest<'a, 'r> for AuthenticatedUser {
     fn from_request(request: &'a Request<'r>) -> request::Outcome<AuthenticatedUser, Self::Error> {
         let mut cookies = request.cookies();
         if let Some(user) = cookies.get_private("user") {
+            let mut admin: u8 = 0;
+            if let Some(admin_rights) = cookies.get_private("admin") {
+                admin = admin_rights.value().parse::<u8>().unwrap();
+            }
+
             return Success(AuthenticatedUser {
                 username: user.value().to_string(),
+                admin_rights: admin,
             });
         }
         Failure((Status::raw(401), ()))

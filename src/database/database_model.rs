@@ -34,9 +34,40 @@ impl StateHandler {
         self.posts.lock().unwrap().clone()
     }
 
+    pub fn get_post(&self, uuid: String) -> Option<Post> {
+        for post in self.posts.lock().unwrap().iter() {
+            if post.uuid == uuid {
+                return Some(post.clone());
+            }
+        }
+        None
+    }
+
     pub fn create_post(&mut self, post: Post) {
         //TODO: this aint no work :(
         self.posts.lock().unwrap().push(post);
+    }
+
+    pub fn get_post_id_by_uuid(&self, uuid: String) -> Option<usize> {
+        for (i, post) in self.posts.lock().unwrap().iter().enumerate() {
+            if post.uuid == uuid {
+                return Some(i);
+            }
+        }
+        None
+    }
+
+    pub fn get_post_by_id(&self, id: usize) -> Option<Post> {
+        self.posts.lock().unwrap().get(id).cloned()
+    }
+
+    pub fn get_post_by_uuid(&self, uuid: String) -> Option<Post> {
+        for post in self.posts.lock().unwrap().iter() {
+            if post.uuid == uuid {
+                return Some(post.clone());
+            }
+        }
+        None
     }
 
     pub fn get_user(&self, username: &str) -> Option<User> {

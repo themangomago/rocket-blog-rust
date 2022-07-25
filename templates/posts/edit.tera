@@ -2,17 +2,22 @@
 
 {% block main %}
 <div class="columns is-centered">
-    <div class="column is-four-fiths">
-        <form class="box" id="create_post" method="post" action="create">
+    <div class="column is-four-fiths box">
+        <nav class="breadcrumb is-small" aria-label="breadcrumbs">
+            <ul>
+                <li>Posts</li>
+                <li>Edit Post</li>
+            </ul>
+        </nav>
+        <form id="update_post" method="post" action="/posts/edit">
             <div class="field">
-                <label for="" class="label">Title</label>
                 <div class="control">
-                    <input name="title" class="input" type="text" placeholder="Title" required>
+                    <input name="title" class="input" type="text" value="{{post.title}}" required>
                 </div>
             </div>
             <div class="field">
                 <div id="editor">
-
+                    {{post.body}}
                 </div>
                 <textarea id="content" hidden name="content"></textarea>
                 <script src="https://cdn.quilljs.com/1.0.0/quill.js"></script>
@@ -39,7 +44,8 @@
                 </script>
             </div>
             <div class="field">
-                <button type="submit" class="button is-danger">Create</button>
+                <input name="uuid" class="input" type="hidden" value="{{post.uuid}}">
+                <button type="submit" class="button is-danger">Update</button>
             </div>
         </form>
     </div>
