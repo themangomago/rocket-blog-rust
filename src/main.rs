@@ -74,7 +74,6 @@ pub fn add_user_cookie_to_context(mut cookies: Cookies, context: &mut Context) {
 
 // Checks for flash messages and provides flash data to html context
 pub fn add_flash_messages_to_context(flash: Option<FlashMessage>, context: &mut Context) {
-    println!("add_flash_messages_to_context");
     if flash.is_some() {
         let flash = flash.unwrap();
         println!("get_flash_message: {}", flash.msg());

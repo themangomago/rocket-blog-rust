@@ -19,11 +19,13 @@ cargo run
 
 ## TODO
 
-- [ ] Add user / Delete user
-- [ ] Change password
+- [x] Add user
+- [ ] Delete user
+- [x] Change password
 - [x] Profile
 - [x] Edit post
 - [x] Pagination
+- [ ] Clean up and optimize :)
 
 Links:
 

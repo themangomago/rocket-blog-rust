@@ -58,6 +58,12 @@ impl UserCredentials {
         let password_hash = hex::encode(sha512.finalize().as_slice());
         self.password_hash == password_hash
     }
+
+    pub fn calc_password_hash(password: &str) -> String {
+        let mut sha512 = Sha512::new();
+        sha512.update(password);
+        hex::encode(sha512.finalize().as_slice())
+    }
 }
 
 impl User {

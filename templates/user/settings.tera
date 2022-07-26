@@ -79,7 +79,7 @@
                 <div class="field">
                     <label for="" class="label">Old Password</label>
                     <div class="control has-icons-left">
-                        <input name="password" class="input" type="password" placeholder="******" required>
+                        <input name="password_old" class="input" type="password" placeholder="******" required>
                         <span class="icon is-small is-left">
                             <ion-icon name="lock-closed-outline"></ion-icon>
                         </span>
@@ -89,7 +89,7 @@
                 <div class="field">
                     <label for="" class="label">New Password</label>
                     <div class="control has-icons-left">
-                        <input name="password" class="input" type="password" placeholder="******" required>
+                        <input name="password_new" class="input" type="password" placeholder="******" required>
                         <span class="icon is-small is-left">
                             <ion-icon name="lock-closed-outline"></ion-icon>
                         </span>
@@ -99,7 +99,7 @@
                 <div class="field">
                     <label for="" class="label">Confirm New Password</label>
                     <div class="control has-icons-left">
-                        <input name="password" class="input" type="password" placeholder="******" required>
+                        <input name="password_confirm" class="input" type="password" placeholder="******" required>
                         <span class="icon is-small is-left">
                             <ion-icon name="lock-closed-outline"></ion-icon>
                         </span>
@@ -114,6 +114,8 @@
     </div>
 </div>
 
+{% if admin %}
+{% if admin == "1" %}
 <div class="columns is-centered">
     <div class="column is-four-fiths box">
         <nav class="breadcrumb is-small" aria-label="breadcrumbs">
@@ -127,11 +129,52 @@
             <p class="content">Be careful with your actions, they cannot be undone.</p>
 
             <p class="title is-5">Manage Users</p>
+            {% if users %}
+            {% for user in users %}
+                <p>
+                    {{user.name}} - {{user.credentials.username}}
+                </p>
+            {% endfor %}
+            {% endif %}
 
             <p class="title is-5">Add New User</p>
+            <form id="add_user" method="post" action="add_user">
+                <div class="field">
+                    <label for="" class="label">Name</label>
+                    <div class="control has-icons-left">
+                        <input name="user_name" class="input" type="text" placeholder="Userhandle" required>
+                        <span class="icon is-small is-left">
+                            <ion-icon name="person-outline"></ion-icon>
+                        </span>
+                    </div>
+                </div>
+                </div>
 
+                <div class="field">
+                    <label for="" class="label">New Password</label>
+                    <div class="control has-icons-left">
+                        <input name="user_password" class="input" type="password" placeholder="******" required>
+                        <span class="icon is-small is-left">
+                            <ion-icon name="lock-closed-outline"></ion-icon>
+                        </span>
+                    </div>
+                </div>
+                <div class="field">
+                    <label for="" class="label">Admin</label>
+                    <label class="checkbox">
+                        <input name="user_admin" type="checkbox">
+                        Is admin
+                      </label>
+                </div>
+
+                <div class="field">
+                    <button type="submit" class="button is-danger">Add User</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
+{% endif %}
+{% endif %}
 
 {% endblock main %}

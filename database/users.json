@@ -9,7 +9,7 @@
     },
     "credentials": {
       "username": "admin",
-      "password_hash": "c7ad44cbad762a5da0a452f9e854fdc1e0e7a52a38015f23f3eab1d80b931dd472634dfac71cd34ebc35d16ab7fb8a90c81f975113d6c7538dc69dd8de9077ec"
+      "password_hash": "3c9909afec25354d551dae21590bb26e38d53f2173b8d3dc3eee4c047e7ab1c1eb8b85103e3be7ba613b31bb5c9c36214dc9f14a42fd7a2fdb84856bca5c44c2"
     }
   },
   {
@@ -23,6 +23,19 @@
     "credentials": {
       "username": "admin2",
       "password_hash": "c7ad44cbad762a5da0a452f9e854fdc1e0e7a52a38015f23f3eab1d80b931dd472634dfac71cd34ebc35d16ab7fb8a90c81f975113d6c7538dc69dd8de9077ec"
+    }
+  },
+  {
+    "name": "user",
+    "admin_rights": 0,
+    "profile": {
+      "bio": "",
+      "twitter": "",
+      "github": ""
+    },
+    "credentials": {
+      "username": "user",
+      "password_hash": "3c9909afec25354d551dae21590bb26e38d53f2173b8d3dc3eee4c047e7ab1c1eb8b85103e3be7ba613b31bb5c9c36214dc9f14a42fd7a2fdb84856bca5c44c2"
     }
   }
 ]

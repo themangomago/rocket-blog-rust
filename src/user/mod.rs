@@ -35,6 +35,20 @@ pub struct SettingsProfileForm {
     pub profile_github: String,
 }
 
+#[derive(FromForm)]
+pub struct SettingsPasswordForm {
+    pub password_old: String,
+    pub password_new: String,
+    pub password_confirm: String,
+}
+
+#[derive(FromForm)]
+pub struct SettingsAddUserForm {
+    pub user_name: String,
+    pub user_password: String,
+    pub user_admin: bool,
+}
+
 #[get("/login")]
 fn login(flash: Option<FlashMessage>, cookies: Cookies) -> Template {
     let mut context = Context::new();
@@ -131,9 +145,15 @@ fn your_profile(
 }
 
 #[get("/settings")]
-fn settings(user: AuthenticatedUser, cookies: Cookies, database: State<StateHandler>) -> Template {
+fn settings(
+    user: AuthenticatedUser,
+    flash: Option<FlashMessage>,
+    cookies: Cookies,
+    database: State<StateHandler>,
+) -> Template {
     let mut context = Context::new();
     add_user_cookie_to_context(cookies, &mut context);
+    add_flash_messages_to_context(flash, &mut context);
 
     // Fetch profile infos
     let user = database.get_user(&user.username);
@@ -149,6 +169,28 @@ fn settings(user: AuthenticatedUser, cookies: Cookies, database: State<StateHand
             admin_rights: user_data.admin_rights,
         };
         context.insert("user", &user);
+
+        // Hand over users if the user is an admin
+        if user_data.admin_rights == 1 {
+            let mut users: Vec<User> = vec![];
+            for user in database.users.lock().unwrap().iter() {
+                let user_data = User {
+                    name: user.name.clone(),
+                    credentials: UserCredentials {
+                        username: user.credentials.username.clone(),
+                        password_hash: "".to_string(),
+                    },
+                    profile: UserProfile {
+                        bio: "".to_string(),
+                        twitter: "".to_string(),
+                        github: "".to_string(),
+                    },
+                    admin_rights: user.admin_rights,
+                };
+                users.push(user_data);
+            }
+            context.insert("users", &users);
+        }
     }
 
     Template::render("user/settings", &context.into_json())
@@ -194,6 +236,104 @@ fn update_profile(
     Ok(Redirect::to("/user/settings"))
 }
 
+#[post("/update_password", data = "<form>")]
+fn update_password(
+    user: AuthenticatedUser,
+    form: Form<SettingsPasswordForm>,
+    database: State<StateHandler>,
+) -> Flash<Redirect> {
+    let user_id = database.get_user_id_by_username(user.username.clone());
+    let user_data = database.get_user_by_id(user_id.unwrap());
+
+    if user_data.is_some() {
+        let user_data = user_data.unwrap();
+
+        // Check if the logged in user is the same as the user in the database
+        if user.username == user_data.credentials.username {
+            // Check if the current password is correct
+            if user_data.credentials.check_password(&form.password_old) {
+                if form.password_confirm == form.password_new {
+                    let password_hash = UserCredentials::calc_password_hash(&form.password_new);
+                    let data = database.inner();
+                    data.users.lock().unwrap()[user_id.unwrap() as usize]
+                        .credentials
+                        .password_hash = password_hash;
+                    database.save_user_database();
+                    return Flash::success(
+                        Redirect::to("/"),
+                        "Password has been changed successfully.",
+                    );
+                } else {
+                    return Flash::error(
+                        Redirect::to("/user/settings"),
+                        "New password does not match the confirm password.",
+                    );
+                }
+            } else {
+                return Flash::error(
+                    Redirect::to("/user/settings"),
+                    "Current password does not match.",
+                );
+            }
+        }
+    }
+
+    return Flash::error(Redirect::to("/user/settings"), "General Error");
+}
+
+#[post("/add_user", data = "<form>")]
+fn add_user(
+    user: AuthenticatedUser,
+    form: Form<SettingsAddUserForm>,
+    database: State<StateHandler>,
+) -> Flash<Redirect> {
+    let user_id = database.get_user_id_by_username(user.username.clone());
+    let user_data = database.get_user_by_id(user_id.unwrap());
+
+    // Check if current user has admin rights
+    if user_data.is_none() {
+        return Flash::error(Redirect::to("/user/settings"), "General Error");
+    }
+    let user_data = user_data.unwrap();
+    if user_data.admin_rights != 1 {
+        return Flash::error(Redirect::to("/user/settings"), "General Error");
+    }
+
+    // Check if user name is unique
+    if database
+        .get_user_id_by_username(form.user_name.clone())
+        .is_some()
+    {
+        return Flash::error(
+            Redirect::to("/user/settings"),
+            "User with that name already exists.",
+        );
+    }
+
+    // Add user to database
+    let admin_right = if form.user_admin { 1 } else { 0 };
+    let password_hash = UserCredentials::calc_password_hash(&form.user_password);
+    let user = User {
+        name: form.user_name.clone(),
+        credentials: UserCredentials {
+            username: form.user_name.clone(),
+            password_hash: password_hash,
+        },
+        profile: UserProfile {
+            bio: "".to_string(),
+            twitter: "".to_string(),
+            github: "".to_string(),
+        },
+        admin_rights: admin_right,
+    };
+
+    let data = database.inner();
+    data.users.lock().unwrap().push(user);
+    database.save_user_database();
+
+    return Flash::success(Redirect::to("/user/settings"), "User has been created.");
+}
+
 pub fn get_routes() -> Vec<rocket::Route> {
     routes![
         login,
@@ -202,6 +342,8 @@ pub fn get_routes() -> Vec<rocket::Route> {
         your_profile,
         profile,
         settings,
-        update_profile
+        update_profile,
+        update_password,
+        add_user
     ]
 }
