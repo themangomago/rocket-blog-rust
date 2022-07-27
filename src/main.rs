@@ -2,7 +2,6 @@
 
 #[macro_use]
 extern crate rocket;
-#[macro_use]
 extern crate rocket_contrib;
 
 use std::path::{Path, PathBuf};
@@ -11,7 +10,7 @@ use rocket::{
     http::Cookies,
     request::FlashMessage,
     response::{Flash, NamedFile, Redirect},
-    Data, State,
+    Request, State,
 };
 use rocket_contrib::templates::Template;
 use serde::Serialize;
@@ -31,11 +30,7 @@ pub struct FlashNotification<'a> {
 
 // Default entrypoint
 #[get("/")]
-fn index(
-    flash: Option<FlashMessage>,
-    mut cookies: Cookies,
-    database: State<StateHandler>,
-) -> Template {
+fn index(flash: Option<FlashMessage>, cookies: Cookies, database: State<StateHandler>) -> Template {
     blog::index(0, flash, cookies, database)
 }
 
@@ -45,10 +40,8 @@ fn files(file: PathBuf) -> Option<NamedFile> {
     NamedFile::open(Path::new("assets/").join(file)).ok()
 }
 
-use rocket::Request;
-
 #[catch(401)]
-fn not_authorized(req: &Request) -> Flash<Redirect> {
+fn not_authorized(_req: &Request) -> Flash<Redirect> {
     return Flash::error(
         Redirect::to("/user/login"),
         "Error: Not authorized to do this action.",

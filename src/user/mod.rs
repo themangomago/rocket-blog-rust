@@ -1,16 +1,12 @@
-use rocket::http::{Cookie, Cookies, RawStr, Status};
-use rocket::outcome::Outcome::*;
-use rocket::request::{self, FlashMessage, Form, FromRequest, Request, State};
+use rocket::http::{Cookie, Cookies, Status};
+use rocket::request::{FlashMessage, Form, State};
 use rocket::response::{Flash, Redirect};
-use rocket::Outcome;
 use rocket_contrib::templates::Template;
 use tera::Context;
 
 use crate::database::database_model::StateHandler;
 use crate::user::user_model::User;
-use crate::{
-    add_flash_messages_to_context, add_user_cookie_to_context, database, FlashNotification,
-};
+use crate::{add_flash_messages_to_context, add_user_cookie_to_context};
 
 use self::user_model::{AuthenticatedUser, UserCredentials, UserProfile};
 

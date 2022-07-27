@@ -1,4 +1,4 @@
-use rocket::http::{Cookie, Cookies, RawStr, Status};
+use rocket::http::{Cookies, RawStr, Status};
 use rocket::request::{FlashMessage, Form};
 use rocket::response::Redirect;
 use rocket::State;
@@ -8,7 +8,7 @@ use uuid::Uuid;
 
 use crate::database::database_model::StateHandler;
 use crate::user::user_model::AuthenticatedUser;
-use crate::{add_flash_messages_to_context, add_user_cookie_to_context, database};
+use crate::{add_flash_messages_to_context, add_user_cookie_to_context};
 
 use self::post_model::Post;
 
@@ -36,7 +36,7 @@ pub struct PostEditForm {
 pub fn index(
     page: u32,
     flash: Option<FlashMessage>,
-    mut cookies: Cookies,
+    cookies: Cookies,
     database: State<StateHandler>,
 ) -> Template {
     let mut context = Context::new();
@@ -152,6 +152,32 @@ fn edit_post(
     return Redirect::to("/");
 }
 
+#[get("/delete/<uuid>")]
+fn delete(
+    user: AuthenticatedUser,
+    uuid: &RawStr,
+    database: State<StateHandler>,
+) -> Result<Redirect, Status> {
+    let post_id = database.get_post_id_by_uuid(uuid.to_string());
+    let post = database.get_post_by_id(post_id.unwrap());
+    if post.is_some() {
+        let post = post.unwrap();
+
+        // Check if user is the author or has admin rights
+        if user.admin_rights > 0 || user.username == post.author {
+            // Delete post
+            let data = database.inner();
+            data.posts.lock().unwrap().remove(post_id.unwrap() as usize);
+
+            // Persist post database
+            database.save_post_database();
+        } else {
+            return Err(Status::Forbidden);
+        }
+    }
+    Ok(Redirect::to("/"))
+}
+
 pub fn get_routes() -> Vec<rocket::Route> {
-    routes![index, create, create_post, edit, edit_post, read]
+    routes![index, create, create_post, edit, edit_post, read, delete]
 }

@@ -1,12 +1,10 @@
 use std::{
     fs::File,
     io::{BufReader, BufWriter},
-    ops::{Deref, DerefMut},
     sync::Mutex,
 };
 
 extern crate serde_json;
-use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha512};
 use uuid::Uuid;
 
@@ -41,11 +39,6 @@ impl StateHandler {
             }
         }
         None
-    }
-
-    pub fn create_post(&mut self, post: Post) {
-        //TODO: this aint no work :(
-        self.posts.lock().unwrap().push(post);
     }
 
     pub fn get_post_id_by_uuid(&self, uuid: String) -> Option<usize> {

@@ -1,8 +1,6 @@
 use rocket::http::Status;
 use rocket::outcome::Outcome::*;
-use rocket::request::{self, FlashMessage, Form, FromRequest, Request, State};
-use rocket::response::{Flash, Redirect};
-use rocket::Outcome;
+use rocket::request::{self, FromRequest, Request};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha512};
 
@@ -26,6 +24,12 @@ pub struct AuthenticatedUser {
     pub admin_rights: u8,
 }
 
+#[derive(Serialize, Deserialize, Clone)]
+pub struct UserCredentials {
+    pub username: String,
+    pub password_hash: String,
+}
+
 impl<'a, 'r> FromRequest<'a, 'r> for AuthenticatedUser {
     type Error = ();
     fn from_request(request: &'a Request<'r>) -> request::Outcome<AuthenticatedUser, Self::Error> {
@@ -43,12 +47,6 @@ impl<'a, 'r> FromRequest<'a, 'r> for AuthenticatedUser {
         }
         Failure((Status::raw(401), ()))
     }
-}
-
-#[derive(Serialize, Deserialize, Clone)]
-pub struct UserCredentials {
-    pub username: String,
-    pub password_hash: String,
 }
 
 impl UserCredentials {
