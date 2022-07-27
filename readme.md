@@ -13,23 +13,5 @@ rustup override set nightly
 cargo run
 ```
 
-
-[](https://rocket.rs/v0.4/guide/requests/)
-
-
-## TODO
-
-- [x] Add user
-- [ ] Delete user
-- [x] Change password
-- [x] Profile
-- [x] Edit post
-- [x] Pagination
-- [ ] Clean up and optimize :)
-
-Links:
-
-https://bulma.io/documentation/overview/colors/
-
-https://github.com/SergioBenitez/Rocket/tree/v0.4/examples
-
+## Example
+![Example of the blog](blog_example.png)

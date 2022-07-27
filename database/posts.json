@@ -1,16 +1,9 @@
 [
   {
-    "uuid": "31ab6837-3bbc-4d00-8889-2d4eabfb1311",
-    "date": "2022-07-19 17:05:24",
+    "uuid": "35968fc1-9e29-420d-93ff-4c397182bc2a",
+    "date": "2022-07-27 11:50:01",
     "author": "admin",
-    "title": "Dummy post 1 ",
-    "body": "This is a dummy post. Congratulations! <br>Be sure to add some real content to it."
-  },
-  {
-    "uuid": "uuid",
-    "date": "2022-07-19 18:26:10",
-    "author": "admin",
-    "title": "Lorem Ipsum",
-    "body": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.<br> Sed molestie nibh ac nisl ultrices vulputate. Sed et faucibus lectus, ut varius velit. Proin vulputate, leo sit amet venenatis malesuada, dui tortor sagittis sem, ac auctor mi nunc et nibh. Donec in nunc feugiat urna ornare ullamcorper. Praesent id maximus nisl. <br>Nullam vehicula orci quis magna viverra auctor. Vivamus id malesuada nisl, sit amet vestibulum ex. Ut rutrum suscipit eros, in maximus arcu congue vitae. Etiam sed lacus vitae est blandit semper mollis ac ex. Suspendisse dapibus vel sapien at congue. Proin eget imperdiet urna.\r\n\r\nDonec euismod tincidunt molestie. Nam interdum quis magna sed pharetra. Ut suscipit, urna sit amet dignissim commodo, lorem justo laoreet elit, in consequat nisi nulla consequat mi. Donec consequat ut odio ut volutpat. Curabitur et facilisis arcu. Nunc in ligula sem. Phasellus commodo nulla ante, vitae sollicitudin neque fermentum vitae. Vivamus fermentum posuere suscipit.\r\n\r\nNam cursus mauris id venenatis pharetra. Cras at sapien eu lectus feugiat sagittis a at diam. Phasellus condimentum sit amet orci non dignissim. Ut sagittis enim sed aliquam auctor. Proin sagittis vehicula orci, in pellentesque justo pharetra et. Maecenas ligula ex, feugiat et ipsum at, lobortis aliquam erat. Sed vel aliquet diam, et ultrices lorem. Etiam eu gravida libero."
+    "title": "Welcome to your Rocket Blog",
+    "body": "<p>This is a dummy post. Congratulations!</p><p>Be sure to add some real content to it.</p><p><br></p><p>User: <em>admin</em></p><p>Password: <em>admin</em></p><p><br></p><h2>Setup:</h2><ol><li>Create your user with admin rights</li><li>Log in with your new user and delete the admin user</li><li>Start writing!</li></ol><p><br></p><h2>Customizing:</h2><p>Do what you want with this blog! Modify the template files and CSS for a better look. </p><p><br></p><p>Have fun with your <a href=\"https://github.com/themangomago/rocket-blog-rust\" target=\"_blank\">Rocket Blog</a></p><p><br></p>"
   }
 ]

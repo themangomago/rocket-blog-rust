@@ -73,8 +73,8 @@
                     <button type="submit" class="button is-danger">Update</button>
                 </div>
             </form>
-
-            <p class="title is-5">Password</p>
+            <hr>
+            <p class="title is-5">Change Password</p>
             <form id="update_password" method="post" action="update_password">
                 <div class="field">
                     <label for="" class="label">Old Password</label>
@@ -127,16 +127,49 @@
         <div class="content">
             <p class="title is-5">Admin Area</p>
             <p class="content">Be careful with your actions, they cannot be undone.</p>
-
+            <hr>
             <p class="title is-5">Manage Users</p>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th style="width: 15%;">Handle</th>
+                        <th>Name</th>
+                        <th style="width: 64px;">Admin</th>
+                        <th style="width: 64px;">Delete</th>
+                    </tr>
+                </thead>
+            
             {% if users %}
             {% for user in users %}
-                <p>
-                    {{user.name}} - {{user.credentials.username}}
+                <tr>
+                    <td><a href="/user/profile/{{user.credentials.username}}" class="has-text-danger">@{{user.credentials.username}}</a></td>
+                    <td>{{user.name}}</td>
+                    <td>
+                        <form action="update_admin" method="post">
+                            <input type="hidden" name="user_name" value="{{user.credentials.username}}">
+                            <button type="submit" class="button">
+                                {% if user.admin_rights == 1 %}
+                                <ion-icon name="checkmark-circle-outline" class="has-text-success"></ion-icon>
+                                {% else %}
+                                <ion-icon name="close-circle-outline"></ion-icon>
+                                {% endif %}
+                            </button>
+                        </form>
+                    </td>
+                    <td>
+                        <form action="delete_user" method="post">
+                            <input type="hidden" name="user_name" value="{{user.credentials.username}}">
+                            <button type="submit" class="button has-text-danger">
+                                <ion-icon name="trash-outline"></ion-icon>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
                 </p>
             {% endfor %}
             {% endif %}
-
+            </table>
+            <hr>
             <p class="title is-5">Add New User</p>
             <form id="add_user" method="post" action="add_user">
                 <div class="field">

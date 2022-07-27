@@ -49,6 +49,16 @@ pub struct SettingsAddUserForm {
     pub user_admin: bool,
 }
 
+#[derive(FromForm)]
+pub struct SettingsDeleteUserForm {
+    pub user_name: String,
+}
+
+#[derive(FromForm)]
+pub struct SettingsAdminUserForm {
+    pub user_name: String,
+}
+
 #[get("/login")]
 fn login(flash: Option<FlashMessage>, cookies: Cookies) -> Template {
     let mut context = Context::new();
@@ -334,6 +344,83 @@ fn add_user(
     return Flash::success(Redirect::to("/user/settings"), "User has been created.");
 }
 
+#[post("/delete_user", data = "<form>")]
+fn delete_user(
+    user: AuthenticatedUser,
+    form: Form<SettingsDeleteUserForm>,
+    database: State<StateHandler>,
+) -> Flash<Redirect> {
+    let user_id = database.get_user_id_by_username(user.username.clone());
+    let user_data = database.get_user_by_id(user_id.unwrap());
+
+    // Check if current user has admin rights
+    if user_data.is_none() {
+        return Flash::error(Redirect::to("/user/settings"), "General Error");
+    }
+    let user_data = user_data.unwrap();
+    if user_data.admin_rights != 1 {
+        return Flash::error(Redirect::to("/user/settings"), "General Error");
+    }
+
+    // Remove user from database
+    let delete_user_id = database.get_user_id_by_username(form.user_name.clone());
+    if delete_user_id.is_some() {
+        let data = database.inner();
+        data.users
+            .lock()
+            .unwrap()
+            .remove(delete_user_id.unwrap() as usize);
+        database.save_user_database();
+    }
+
+    return Flash::success(Redirect::to("/user/settings"), "User has been deleted.");
+}
+
+#[post("/update_admin", data = "<form>")]
+fn update_admin(
+    user: AuthenticatedUser,
+    form: Form<SettingsAdminUserForm>,
+    database: State<StateHandler>,
+) -> Flash<Redirect> {
+    let user_id = database.get_user_id_by_username(user.username.clone());
+    let user_data = database.get_user_by_id(user_id.unwrap());
+
+    // Check if current user has admin rights
+    if user_data.is_none() {
+        return Flash::error(Redirect::to("/user/settings"), "General Error");
+    }
+    let user_data = user_data.unwrap();
+    if user_data.admin_rights != 1 {
+        return Flash::error(Redirect::to("/user/settings"), "General Error");
+    }
+
+    // Update admin rights
+    let update_user_id = database.get_user_id_by_username(form.user_name.clone());
+    let update_user_data = database.get_user_by_id(update_user_id.unwrap());
+
+    if update_user_data.is_some() {
+        let update_user_data = update_user_data.unwrap();
+        let admin_right = if update_user_data.admin_rights == 1 {
+            0
+        } else {
+            1
+        };
+        let data = database.inner();
+        data.users
+            .lock()
+            .unwrap()
+            .get_mut(update_user_id.unwrap() as usize)
+            .unwrap()
+            .admin_rights = admin_right;
+        database.save_user_database();
+    }
+
+    return Flash::success(
+        Redirect::to("/user/settings"),
+        "Admin rights have been changed successfully.",
+    );
+}
+
 pub fn get_routes() -> Vec<rocket::Route> {
     routes![
         login,
@@ -344,6 +431,8 @@ pub fn get_routes() -> Vec<rocket::Route> {
         settings,
         update_profile,
         update_password,
-        add_user
+        add_user,
+        delete_user,
+        update_admin
     ]
 }
